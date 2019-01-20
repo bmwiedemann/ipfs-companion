@@ -12,6 +12,7 @@ exports.optionDefaults = Object.freeze({
   }, null, 2),
   publicGatewayUrl: 'https://ipfs.io',
   useCustomGateway: true,
+  noRedirectHostnames: [],
   automaticMode: true,
   linkify: false,
   dnslinkPolicy: 'best-effort',

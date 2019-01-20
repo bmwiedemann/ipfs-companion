@@ -16,6 +16,8 @@ module.exports = (state, emitter) => {
     isUnPinning: false,
     isPinned: false,
     currentTab: null,
+    currentHostname: null,
+    currentDNSLinkHostname: null,
     // IPFS status
     ipfsNodeType: 'external',
     isIpfsOnline: false,
@@ -24,7 +26,9 @@ module.exports = (state, emitter) => {
     gatewayAddress: null,
     swarmPeers: null,
     gatewayVersion: null,
-    redirectEnabled: false,
+    noRedirectHostnames: [],
+    globalRedirectEnabled: false,
+    siteRedirectOptOut: false,
     isApiAvailable: false
   })
 
@@ -47,6 +51,7 @@ module.exports = (state, emitter) => {
           await updatePageActionsState(status)
           emitter.emit('render')
         }
+        console.log('statusAfterUpdate', status)
       }
     })
     // fix for https://github.com/ipfs-shipyard/ipfs-companion/issues/318
@@ -143,20 +148,60 @@ module.exports = (state, emitter) => {
       })
   })
 
-  emitter.on('toggleRedirect', async () => {
-    const enabled = state.redirectEnabled
-    state.redirectEnabled = !enabled
-    state.gatewayAddress = '…'
+  emitter.on('toggleGlobalRedirect', async () => {
+    const redirectEnabled = state.globalRedirectEnabled
+    // If all integrations were suspended..
+    if (!state.active) {
+      // ..clicking on 'inactive' toggle implies user wants to go online
+      emitter.emit('toggleActive')
+      // if redirect was already on, then we dont want to disable it, as it would be bad UX
+      if (redirectEnabled) return
+    }
+    state.globalRedirectEnabled = !redirectEnabled
+    state.gatewayAddress = state.globalRedirectEnabled ? state.gwURLString : state.pubGwURLString
     emitter.emit('render')
 
     try {
-      await browser.storage.local.set({ useCustomGateway: !enabled })
+      await browser.storage.local.set({ useCustomGateway: !redirectEnabled })
     } catch (error) {
       console.error(`Unable to update redirect state due to ${error}`)
-      state.redirectEnabled = enabled
+      state.globalRedirectEnabled = redirectEnabled
     }
 
     emitter.emit('render')
+  })
+
+  emitter.on('toggleSiteRedirect', async () => {
+    state.siteRedirectOptOut = !state.siteRedirectOptOut
+    emitter.emit('render')
+
+    try {
+      let noRedirectHostnames = state.noRedirectHostnames
+      // if we are on /ipns/fqdn.tld/ then use hostname from DNSLink
+      let hostname = state.currentDNSLinkHostname || state.currentHostname
+      if (noRedirectHostnames.includes(hostname)) {
+        noRedirectHostnames = noRedirectHostnames.filter(host => host !== hostname)
+      } else {
+        noRedirectHostnames.push(hostname)
+      }
+      await browser.storage.local.set({ noRedirectHostnames })
+      if (!state.currentDNSLinkHostname) {
+        // Site-specific opt-out was removed, refresh will trigger redirect
+        await browser.tabs.reload(state.currentTab.id)
+      } else {
+        /* TODO: navigate to original URL (before redirect)
+        const newURL = getOriginalURL(state.currentTab.url)
+        await browser.tabs.update(state.currentTab.id, {
+          loadReplace: true,
+          url: newURL
+        })
+        */
+      }
+    } catch (error) {
+      console.error(`Unable to update redirect state due to ${error}`)
+      emitter.emit('render')
+    }
+    window.close()
   })
 
   emitter.on('toggleNodeType', async () => {
@@ -176,8 +221,7 @@ module.exports = (state, emitter) => {
     const prev = state.active
     state.active = !prev
     if (!state.active) {
-      const options = await browser.storage.local.get()
-      state.gatewayAddress = options.publicGatewayUrl
+      state.gatewayAddress = state.pubGwURLString
       state.ipfsApiUrl = null
       state.gatewayVersion = null
       state.swarmPeers = null
@@ -189,14 +233,16 @@ module.exports = (state, emitter) => {
     } catch (error) {
       console.error(`Unable to update global Active flag due to ${error}`)
       state.active = prev
-      emitter.emit('render')
     }
+    emitter.emit('render')
   })
 
   async function updatePageActionsState (status) {
     // Check if current page is an IPFS one
     state.isIpfsContext = status.ipfsPageActionsContext || false
     state.currentTab = status.currentTab || null
+    state.currentHostname = status.currentHostname || null
+    state.siteRedirectOptOut = state.noRedirectHostnames.includes(state.currentHostname)
 
     // browser.pageAction-specific items that can be rendered earlier (snappy UI)
     requestAnimationFrame(async () => {
@@ -221,21 +267,21 @@ module.exports = (state, emitter) => {
 
   async function updateBrowserActionState (status) {
     if (status) {
-      const options = await browser.storage.local.get()
-      state.active = status.active
-      if (state.active && options.useCustomGateway && (options.ipfsNodeType !== 'embedded')) {
-        state.gatewayAddress = options.customGatewayUrl
+      // Copy all attributes
+      Object.assign(state, status)
+
+      if (state.active && status.redirect && (status.ipfsNodeType !== 'embedded')) {
+        state.gatewayAddress = status.gwURLString
       } else {
-        state.gatewayAddress = options.publicGatewayUrl
+        state.gatewayAddress = status.pubGwURLString
       }
-      state.ipfsNodeType = status.ipfsNodeType
-      state.redirectEnabled = state.active && options.useCustomGateway
+      state.globalRedirectEnabled = state.active && status.redirect
       // Upload requires access to the background page (https://github.com/ipfs-shipyard/ipfs-companion/issues/477)
       state.isApiAvailable = state.active && !!(await browser.runtime.getBackgroundPage()) && !browser.extension.inIncognitoContext // https://github.com/ipfs-shipyard/ipfs-companion/issues/243
       state.swarmPeers = !state.active || status.peerCount === -1 ? null : status.peerCount
       state.isIpfsOnline = state.active && status.peerCount > -1
       state.gatewayVersion = state.active && status.gatewayVersion ? status.gatewayVersion : null
-      state.ipfsApiUrl = state.active ? options.ipfsApiUrl : null
+      state.ipfsApiUrl = state.active ? status.apiURLString : null
     } else {
       state.ipfsNodeType = 'external'
       state.swarmPeers = null

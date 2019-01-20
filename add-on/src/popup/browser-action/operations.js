@@ -9,18 +9,20 @@ module.exports = function operations ({
   active,
   ipfsNodeType,
   isIpfsOnline,
-  redirectEnabled,
+  globalRedirectEnabled,
+  siteRedirectOptOut,
   isApiAvailable,
   onQuickUpload,
   onOpenWebUi,
-  onToggleRedirect
+  onToggleSiteRedirect
 }) {
   const activeQuickUpload = active && isIpfsOnline && isApiAvailable
   const activeWebUI = active && isIpfsOnline // (js-ipfs >=0.34.0-rc.0 is ok) && ipfsNodeType === 'external'
-  const activeGatewaySwitch = active && ipfsNodeType === 'external'
+  const activeSiteRedirectSwitch = active && globalRedirectEnabled && ipfsNodeType === 'external'
 
   return html`
     <div class="fade-in pv1">
+      <div class="bb b--black-20">
   ${navItem({
     text: browser.i18n.getMessage('panel_quickUpload'),
     addClass: 'b',
@@ -32,14 +34,15 @@ module.exports = function operations ({
     disabled: !activeWebUI,
     onClick: onOpenWebUi
   })}
+      </div>
   ${navItem({
     text: browser.i18n.getMessage(
-      redirectEnabled && activeGatewaySwitch
-        ? 'panel_globalRedirectDisable'
-        : 'panel_globalRedirectEnable'
+      globalRedirectEnabled && !siteRedirectOptOut
+        ? 'panel_thisSiteRedirectDisable'
+        : 'panel_thisSiteRedirectEnable'
     ),
-    disabled: !activeGatewaySwitch,
-    onClick: onToggleRedirect
+    disabled: !activeSiteRedirectSwitch,
+    onClick: onToggleSiteRedirect
   })}
     </div>
   `

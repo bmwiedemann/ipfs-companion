@@ -17,13 +17,14 @@ module.exports = function browserActionPage (state, emit) {
   const onQuickUpload = () => emit('quickUpload')
   const onOpenWebUi = () => emit('openWebUi')
   const onOpenPrefs = () => emit('openPrefs')
-  const onToggleRedirect = () => emit('toggleRedirect')
+  const onToggleGlobalRedirect = () => emit('toggleGlobalRedirect')
+  const onToggleSiteRedirect = () => emit('toggleSiteRedirect')
   const onToggleNodeType = () => emit('toggleNodeType')
   const onToggleActive = () => emit('toggleActive')
 
-  const headerProps = Object.assign({ onToggleNodeType, onToggleActive, onOpenPrefs }, state)
+  const headerProps = Object.assign({ onToggleNodeType, onToggleActive, onToggleGlobalRedirect, onOpenPrefs }, state)
   const contextActionsProps = Object.assign({ onCopy, onPin, onUnPin }, state)
-  const opsProps = Object.assign({ onQuickUpload, onOpenWebUi, onToggleRedirect }, state)
+  const opsProps = Object.assign({ onQuickUpload, onOpenWebUi, onToggleSiteRedirect }, state)
 
   return html`
     <div class="sans-serif" style="text-rendering: optimizeLegibility;">

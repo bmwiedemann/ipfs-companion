@@ -207,12 +207,16 @@ module.exports = async function init () {
 
   async function sendStatusUpdateToBrowserAction () {
     if (!browserActionPort) return
+    const dropSlash = url => url.replace(/\/$/, '')
     const info = {
       active: state.active,
       ipfsNodeType: state.ipfsNodeType,
       peerCount: state.peerCount,
-      gwURLString: state.gwURLString,
-      pubGwURLString: state.pubGwURLString,
+      gwURLString: dropSlash(state.gwURLString),
+      pubGwURLString: dropSlash(state.pubGwURLString),
+      apiURLString: dropSlash(state.apiURLString),
+      redirect: state.redirect,
+      noRedirectHostnames: state.noRedirectHostnames,
       currentTab: await browser.tabs.query({ active: true, currentWindow: true }).then(tabs => tabs[0])
     }
     try {
@@ -225,6 +229,9 @@ module.exports = async function init () {
     }
     if (info.currentTab) {
       info.ipfsPageActionsContext = ipfsPathValidator.isIpfsPageActionsContext(info.currentTab.url)
+      info.currentHostname = new URL(info.currentTab.url).hostname
+      info.currentDNSLinkHostname = ipfsPathValidator.findDNSLinkHostname(info.currentTab.url)
+      info.siteRedirectOptOut = info.noRedirectHostnames && info.noRedirectHostnames.includes(info.currentHostname)
     }
     // Still here?
     if (browserActionPort) {
@@ -621,6 +628,7 @@ module.exports = async function init () {
         case 'automaticMode':
         case 'detectIpfsPathHeader':
         case 'preloadAtPublicGateway':
+        case 'noRedirectHostnames':
           state[key] = change.newValue
           break
       }

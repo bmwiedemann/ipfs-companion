@@ -63,6 +63,12 @@ function createIpfsPathValidator (getState, dnsLink) {
       return validIpfsOrIpnsPath(path, dnsLink)
     },
 
+    // Test if URL contains a valid DNSLink website
+    // and return original hostname if present
+    findDNSLinkHostname (url) {
+      return findDNSLinkHostname(new URL(url).pathname, dnsLink)
+    },
+
     // Test if actions such as 'copy URL', 'pin/unpin' should be enabled for the URL
     isIpfsPageActionsContext (url) {
       return (IsIpfs.url(url) && !url.startsWith(getState().apiURLString)) || IsIpfs.subdomain(url)
@@ -110,10 +116,25 @@ function validIpnsPath (path, dnsLink) {
       // console.log('==> IPNS is a valid CID', ipnsRoot)
       return true
     }
+    // then see if there is an DNSLink entry for 'ipnsRoot' hostname
     if (dnsLink.readAndCacheDnslink(ipnsRoot)) {
       // console.log('==> IPNS for FQDN with valid dnslink: ', ipnsRoot)
       return true
     }
   }
   return false
+}
+
+function findDNSLinkHostname (path, dnsLink) {
+  if (IsIpfs.ipnsPath(path)) {
+    // we may have false-positives here, so we do additional checks below
+    const ipnsRoot = path.match(/^\/ipns\/([^/]+)/)[1]
+    console.log('==> IPNS root', ipnsRoot)
+    // Ignore PeerIDs, match DNSLink only
+    if (!IsIpfs.cid(ipnsRoot) && dnsLink.readAndCacheDnslink(ipnsRoot)) {
+      console.log('==> IPNS for FQDN with valid dnslink: ', ipnsRoot)
+      return ipnsRoot
+    }
+  }
+  return null
 }

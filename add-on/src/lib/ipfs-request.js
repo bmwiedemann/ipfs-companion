@@ -42,6 +42,14 @@ function createRequestModifier (getState, dnslinkResolver, ipfsPathValidator, ru
     if (request.url.startsWith('http://127.0.0.1') || request.url.startsWith('http://localhost') || request.url.startsWith('http://[::1]')) {
       ignore(request.requestId)
     }
+    // skip if a redirect opt-out exists
+    // TODO: optimize
+    // FF: originUrl, Chrome 63: initiator
+    const parentUrl = request.originUrl || request.initiator || request.url
+    const fqdn = new URL(parentUrl).hostname
+    if (state.noRedirectHostnames.some(optout => fqdn.endsWith(optout))) {
+      ignore(request.requestId)
+    }
     return isIgnored(request.requestId)
   }
   const postNormalizationSkip = (state, request) => {

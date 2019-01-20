@@ -11,6 +11,10 @@
     "message": "Global toggle: Suspend all IPFS integrations",
     "description": "A label for an embedded IPFS node (panel_headerActiveToggleTitle)"
   },
+  "panel_headerRedirectToggleTitle": {
+    "message": "Global toggle: Stop all gateway redirections",
+    "description": "A label for an embedded IPFS node (panel_headerActiveToggleTitle)"
+  },
   "panel_statusOffline": {
     "message": "offline",
     "description": "A label in Node status section of Browser Action pop-up (panel_statusOffline)"
@@ -48,12 +52,16 @@
     "description": "A menu item in Browser Action pop-up (panel_openPreferences)"
   },
   "panel_globalRedirectEnable": {
-    "message": "Enable Gateway Redirect",
+    "message": "Enable All Redirects",
     "description": "A menu item in Browser Action pop-up (panel_globalRedirectEnable)"
   },
-  "panel_globalRedirectDisable": {
-    "message": "Disable Gateway Redirect",
-    "description": "A menu item in Browser Action pop-up (panel_globalRedirectDisable)"
+  "panel_thisSiteRedirectEnable": {
+    "message": "Restore Redirects on This Site",
+    "description": "A menu item in Browser Action pop-up (panel_thisSiteRedirectEnable)"
+  },
+  "panel_thisSiteRedirectDisable": {
+    "message": "Disable Redirects on This Site",
+    "description": "A menu item in Browser Action pop-up (panel_thisSiteRedirectDisable)"
   },
   "panel_pinCurrentIpfsAddress": {
     "message": "Pin IPFS Resource",
