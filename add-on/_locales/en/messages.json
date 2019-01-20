@@ -47,13 +47,13 @@
     "message": "Open Preferences of Browser Extension",
     "description": "A menu item in Browser Action pop-up (panel_openPreferences)"
   },
-  "panel_switchToCustomGateway": {
-    "message": "Switch to Custom Gateway",
-    "description": "A menu item in Browser Action pop-up (panel_switchToCustomGateway)"
+  "panel_globalRedirectEnable": {
+    "message": "Enable Gateway Redirect",
+    "description": "A menu item in Browser Action pop-up (panel_globalRedirectEnable)"
   },
-  "panel_switchToPublicGateway": {
-    "message": "Switch to Public Gateway",
-    "description": "A menu item in Browser Action pop-up (panel_switchToPublicGateway)"
+  "panel_globalRedirectDisable": {
+    "message": "Disable Gateway Redirect",
+    "description": "A menu item in Browser Action pop-up (panel_globalRedirectDisable)"
   },
   "panel_pinCurrentIpfsAddress": {
     "message": "Pin IPFS Resource",

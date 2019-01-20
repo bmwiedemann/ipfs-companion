@@ -28,18 +28,18 @@ module.exports = function operations ({
     onClick: onQuickUpload
   })}
   ${navItem({
-    text: browser.i18n.getMessage(
-      redirectEnabled && activeGatewaySwitch
-        ? 'panel_switchToPublicGateway'
-        : 'panel_switchToCustomGateway'
-    ),
-    disabled: !activeGatewaySwitch,
-    onClick: onToggleRedirect
-  })}
-  ${navItem({
     text: browser.i18n.getMessage('panel_openWebui'),
     disabled: !activeWebUI,
     onClick: onOpenWebUi
+  })}
+  ${navItem({
+    text: browser.i18n.getMessage(
+      redirectEnabled && activeGatewaySwitch
+        ? 'panel_globalRedirectDisable'
+        : 'panel_globalRedirectEnable'
+    ),
+    disabled: !activeGatewaySwitch,
+    onClick: onToggleRedirect
   })}
     </div>
   `
