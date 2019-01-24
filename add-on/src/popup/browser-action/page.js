@@ -23,18 +23,19 @@ module.exports = function browserActionPage (state, emit) {
   const onToggleActive = () => emit('toggleActive')
 
   const headerProps = Object.assign({ onToggleNodeType, onToggleActive, onToggleGlobalRedirect, onOpenPrefs }, state)
-  const contextActionsProps = Object.assign({ onCopy, onPin, onUnPin }, state)
-  const opsProps = Object.assign({ onQuickUpload, onOpenWebUi, onToggleSiteRedirect }, state)
+  const contextActionsProps = Object.assign({ onToggleSiteRedirect, onCopy, onPin, onUnPin }, state)
+  const opsProps = Object.assign({ onQuickUpload, onOpenWebUi }, state)
 
   return html`
     <div class="sans-serif" style="text-rendering: optimizeLegibility;">
       ${header(headerProps)}
-      <div class="bb b--black-20">
-        ${contextActions(contextActionsProps)}
+      ${operations(opsProps)}
+      <div class="truncate no-select w-100 bg-snow b--none outline-0--focus pv2 pr3 f5 tl">
+        <div class="pl3 tr">www.wikipedia.org</div>
+        <!--span class="small-caps" title="TODO full url">www.wikipedia.org</span-->
+${contextActions(contextActionsProps)}
       </div>
-      <div class="bb b--black-20">
-        ${operations(opsProps)}
-      </div>
+
     </div>
   `
 }

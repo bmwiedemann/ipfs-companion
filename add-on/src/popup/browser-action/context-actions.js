@@ -8,6 +8,8 @@ const { contextMenuCopyAddressAtPublicGw, contextMenuCopyRawCid, contextMenuCopy
 
 module.exports = function contextActions ({
   active,
+  globalRedirectEnabled,
+  currentTabRedirectOptOut,
   ipfsNodeType,
   isIpfsContext,
   isPinning,
@@ -15,14 +17,16 @@ module.exports = function contextActions ({
   isPinned,
   isIpfsOnline,
   isApiAvailable,
+  onToggleSiteRedirect,
   onCopy,
   onPin,
   onUnPin
 }) {
-  if (!isIpfsContext) return null
   const activePinControls = active && isIpfsOnline && isApiAvailable && !(isPinning || isUnPinning)
-  return html`
-    <div class='fade-in pv1'>
+  const activeSiteRedirectSwitch = active && globalRedirectEnabled && ipfsNodeType === 'external'
+  const renderIpfsContextItems = () => {
+    if (!isIpfsContext) return
+    return html`<div>
   ${navItem({
     text: browser.i18n.getMessage(contextMenuCopyAddressAtPublicGw),
     onClick: () => onCopy(contextMenuCopyAddressAtPublicGw)
@@ -50,6 +54,21 @@ module.exports = function contextActions ({
       onClick: onUnPin
     })
   ) : null}
+  </div>
+    `
+  }
+  return html`
+    <div class='fade-in pv1'>
+  ${navItem({
+    text: browser.i18n.getMessage(
+      globalRedirectEnabled && !currentTabRedirectOptOut
+        ? 'panel_thisSiteRedirectDisable'
+        : 'panel_thisSiteRedirectEnable'
+    ),
+    disabled: !activeSiteRedirectSwitch,
+    onClick: onToggleSiteRedirect
+  })}
+  ${renderIpfsContextItems()}
     </div>
   `
 }

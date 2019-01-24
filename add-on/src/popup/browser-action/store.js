@@ -28,7 +28,7 @@ module.exports = (state, emitter) => {
     gatewayVersion: null,
     noRedirectHostnames: [],
     globalRedirectEnabled: false,
-    siteRedirectOptOut: false,
+    currentTabRedirectOptOut: false,
     isApiAvailable: false
   })
 
@@ -172,7 +172,7 @@ module.exports = (state, emitter) => {
   })
 
   emitter.on('toggleSiteRedirect', async () => {
-    state.siteRedirectOptOut = !state.siteRedirectOptOut
+    state.currentTabRedirectOptOut = !state.currentTabRedirectOptOut
     emitter.emit('render')
 
     try {
@@ -190,6 +190,7 @@ module.exports = (state, emitter) => {
         await browser.tabs.reload(state.currentTab.id)
       } else {
         /* TODO: navigate to original URL (before redirect)
+        // idea: do HEAD fetch for https, then fallback to http?
         const newURL = getOriginalURL(state.currentTab.url)
         await browser.tabs.update(state.currentTab.id, {
           loadReplace: true,
@@ -242,7 +243,7 @@ module.exports = (state, emitter) => {
     state.isIpfsContext = status.ipfsPageActionsContext || false
     state.currentTab = status.currentTab || null
     state.currentHostname = status.currentHostname || null
-    state.siteRedirectOptOut = state.noRedirectHostnames.includes(state.currentHostname)
+    state.currentTabRedirectOptOut = state.noRedirectHostnames.includes(state.currentHostname)
 
     // browser.pageAction-specific items that can be rendered earlier (snappy UI)
     requestAnimationFrame(async () => {

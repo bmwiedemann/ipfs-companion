@@ -231,7 +231,7 @@ module.exports = async function init () {
       info.ipfsPageActionsContext = ipfsPathValidator.isIpfsPageActionsContext(info.currentTab.url)
       info.currentHostname = new URL(info.currentTab.url).hostname
       info.currentDNSLinkHostname = ipfsPathValidator.findDNSLinkHostname(info.currentTab.url)
-      info.siteRedirectOptOut = info.noRedirectHostnames && info.noRedirectHostnames.includes(info.currentHostname)
+      info.currentTabRedirectOptOut = info.noRedirectHostnames && info.noRedirectHostnames.includes(info.currentHostname)
     }
     // Still here?
     if (browserActionPort) {
