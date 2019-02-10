@@ -30,12 +30,15 @@ module.exports = function browserActionPage (state, emit) {
     <div class="sans-serif" style="text-rendering: optimizeLegibility;">
       ${header(headerProps)}
       ${operations(opsProps)}
-      <div class="truncate no-select w-100 bg-snow b--none outline-0--focus pv2 pr3 f5 tl">
-        <div class="pl3 tr">www.wikipedia.org</div>
-        <!--span class="small-caps" title="TODO full url">www.wikipedia.org</span-->
-${contextActions(contextActionsProps)}
+      
+      <div class="no-select w-100 outline-0--focus tl ba b--dashed b--navy-muted">
+        <div class="ph3 pv2 i bg-snow truncate tl ">
+          ${state.currentFqdn}
+        </div>
+        <div class="">
+          ${contextActions(contextActionsProps)}
+        </div>
       </div>
-
     </div>
   `
 }

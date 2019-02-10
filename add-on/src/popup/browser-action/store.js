@@ -16,8 +16,8 @@ module.exports = (state, emitter) => {
     isUnPinning: false,
     isPinned: false,
     currentTab: null,
-    currentHostname: null,
-    currentDNSLinkHostname: null,
+    currentFqdn: null,
+    currentDnslinkFqdn: null,
     // IPFS status
     ipfsNodeType: 'external',
     isIpfsOnline: false,
@@ -178,14 +178,14 @@ module.exports = (state, emitter) => {
     try {
       let noRedirectHostnames = state.noRedirectHostnames
       // if we are on /ipns/fqdn.tld/ then use hostname from DNSLink
-      let hostname = state.currentDNSLinkHostname || state.currentHostname
-      if (noRedirectHostnames.includes(hostname)) {
-        noRedirectHostnames = noRedirectHostnames.filter(host => host !== hostname)
+      let fqdn = state.currentDnslinkFqdn || state.currentFqdn
+      if (noRedirectHostnames.includes(fqdn)) {
+        noRedirectHostnames = noRedirectHostnames.filter(host => !host.endsWith(fqdn))
       } else {
-        noRedirectHostnames.push(hostname)
+        noRedirectHostnames.push(fqdn)
       }
       await browser.storage.local.set({ noRedirectHostnames })
-      if (!state.currentDNSLinkHostname) {
+      if (!state.currentDnslinkFqdn) {
         // Site-specific opt-out was removed, refresh will trigger redirect
         await browser.tabs.reload(state.currentTab.id)
       } else {
@@ -196,7 +196,7 @@ module.exports = (state, emitter) => {
           loadReplace: true,
           url: newURL
         })
-        */
+       */
       }
     } catch (error) {
       console.error(`Unable to update redirect state due to ${error}`)
@@ -242,8 +242,8 @@ module.exports = (state, emitter) => {
     // Check if current page is an IPFS one
     state.isIpfsContext = status.ipfsPageActionsContext || false
     state.currentTab = status.currentTab || null
-    state.currentHostname = status.currentHostname || null
-    state.currentTabRedirectOptOut = state.noRedirectHostnames.includes(state.currentHostname)
+    state.currentFqdn = status.currentFqdn || null
+    state.currentTabRedirectOptOut = state.noRedirectHostnames.includes(state.currentFqdn)
 
     // browser.pageAction-specific items that can be rendered earlier (snappy UI)
     requestAnimationFrame(async () => {

@@ -229,9 +229,9 @@ module.exports = async function init () {
     }
     if (info.currentTab) {
       info.ipfsPageActionsContext = ipfsPathValidator.isIpfsPageActionsContext(info.currentTab.url)
-      info.currentHostname = new URL(info.currentTab.url).hostname
-      info.currentDNSLinkHostname = ipfsPathValidator.findDNSLinkHostname(info.currentTab.url)
-      info.currentTabRedirectOptOut = info.noRedirectHostnames && info.noRedirectHostnames.includes(info.currentHostname)
+      info.currentDnslinkFqdn = ipfsPathValidator.findDNSLinkHostname(info.currentTab.url)
+      info.currentFqdn = info.currentDnslinkFqdn || new URL(info.currentTab.url).hostname
+      info.currentTabRedirectOptOut = info.noRedirectHostnames && info.noRedirectHostnames.includes(info.currentFqdn)
     }
     // Still here?
     if (browserActionPort) {

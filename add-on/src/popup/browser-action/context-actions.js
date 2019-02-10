@@ -24,6 +24,7 @@ module.exports = function contextActions ({
 }) {
   const activePinControls = active && isIpfsOnline && isApiAvailable && !(isPinning || isUnPinning)
   const activeSiteRedirectSwitch = active && globalRedirectEnabled && ipfsNodeType === 'external'
+
   const renderIpfsContextItems = () => {
     if (!isIpfsContext) return
     return html`<div>
@@ -57,6 +58,7 @@ module.exports = function contextActions ({
   </div>
     `
   }
+
   return html`
     <div class='fade-in pv1'>
   ${navItem({
