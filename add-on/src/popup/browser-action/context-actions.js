@@ -60,20 +60,28 @@ module.exports = function contextActions ({
     `
   }
 
-  return html`
-    <div class='fade-in pv1'>
-  ${renderIpfsContextItems()}
-  ${navItem({
-    text: browser.i18n.getMessage(
+  const renderSiteRedirectToggle = () => {
+    if (!activeSiteRedirectSwitch) return
+    const siteRedirectToggleLabel = browser.i18n.getMessage(
       globalRedirectEnabled && !currentTabRedirectOptOut
-        ? 'panel_thisSiteRedirectDisable'
-        : 'panel_thisSiteRedirectEnable',
+        ? 'panel_activeTabSiteRedirectDisable'
+        : 'panel_activeTabSiteRedirectEnable',
       currentFqdn
-    ),
+    )
+    return html`
+  ${navItem({
+    text: siteRedirectToggleLabel,
     addClass: 'truncate',
     disabled: !activeSiteRedirectSwitch,
     onClick: onToggleSiteRedirect
   })}
+      `
+  }
+
+  return html`
+    <div class='fade-in pv1'>
+  ${renderIpfsContextItems()}
+  ${renderSiteRedirectToggle()}
     </div>
   `
 }

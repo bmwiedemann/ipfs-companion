@@ -55,13 +55,17 @@
     "message": "Enable All Redirects",
     "description": "A menu item in Browser Action pop-up (panel_globalRedirectEnable)"
   },
-  "panel_thisSiteRedirectEnable": {
-    "message": "Restore Redirects on $1",
-    "description": "A menu item in Browser Action pop-up (panel_thisSiteRedirectEnable)"
+  "panel_activeTabSectionHeader": {
+    "message": "Active Tab",
+    "description": "A menu item in Browser Action pop-up (panel_activeTabSiteRedirectEnable)"
   },
-  "panel_thisSiteRedirectDisable": {
+  "panel_activeTabSiteRedirectEnable": {
+    "message": "Restore Redirects on $1",
+    "description": "A menu item in Browser Action pop-up (panel_activeTabSiteRedirectEnable)"
+  },
+  "panel_activeTabSiteRedirectDisable": {
     "message": "Disable Redirects on $1",
-    "description": "A menu item in Browser Action pop-up (panel_thisSiteRedirectDisable)"
+    "description": "A menu item in Browser Action pop-up (panel_activeTabSiteRedirectDisable)"
   },
   "panel_pinCurrentIpfsAddress": {
     "message": "Pin IPFS Resource",

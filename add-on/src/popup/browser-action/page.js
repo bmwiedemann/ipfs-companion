@@ -1,6 +1,7 @@
 'use strict'
 /* eslint-env browser, webextensions */
 
+const browser = require('webextension-polyfill')
 const html = require('choo/html')
 const header = require('./header')
 const contextActions = require('./context-actions')
@@ -31,14 +32,16 @@ module.exports = function browserActionPage (state, emit) {
       ${header(headerProps)}
       ${operations(opsProps)}
 
+      <!-- Active Tab Actions -->
       <div class="no-select w-100 outline-0--focus tl ba b--dashed b--navy-muted">
-        <div class="ph3 pv2 b navy-muted bg-snow-muted truncate tl ">
-          Actions for <span title="${state.currentFqdn}">the Active Tab</span>:
+        <div class="ph3 pv2 tr  charcoal bg-snow-muted truncate tl">
+          ${browser.i18n.getMessage('panel_activeTabSectionHeader')}
         </div>
         <div class="">
           ${contextActions(contextActionsProps)}
         </div>
       </div>
+
     </div>
   `
 }
