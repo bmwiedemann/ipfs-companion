@@ -2,6 +2,7 @@
 /* eslint-env browser, webextensions */
 
 const browser = require('webextension-polyfill')
+const IsIpfs = require('is-ipfs')
 const { safeIpfsPath, trimHashAndSearch } = require('../../lib/ipfs-path')
 const { contextMenuCopyAddressAtPublicGw, contextMenuCopyRawCid, contextMenuCopyCanonicalAddress } = require('../../lib/context-menus')
 
@@ -184,19 +185,23 @@ module.exports = (state, emitter) => {
       } else {
         noRedirectHostnames.push(fqdn)
       }
+      console.dir('toggleSiteRedirect', state)
       await browser.storage.local.set({ noRedirectHostnames })
-      if (!state.currentDnslinkFqdn) {
-        // Site-specific opt-out was removed, refresh will trigger redirect
+
+      // Reload the current tab to apply updated redirect preference
+      if (!state.currentDnslinkFqdn || !IsIpfs.ipnsUrl(state.currentTab.url)) {
+        // No DNSLink, reload URL as-is
         await browser.tabs.reload(state.currentTab.id)
       } else {
-        /* TODO: navigate to original URL (before redirect)
-        // idea: do HEAD fetch for https, then fallback to http?
-        const newURL = getOriginalURL(state.currentTab.url)
+        // DNSLinked websites require URL change
+        // from  http?://gateway.tld/ipns/{fqdn}/some/path
+        // to    http://{fqdn}/some/path
+        // (default to http, as https websites will have HSTS or a redirect)
+        const originalUrl = state.currentTab.url.replace(/^.*\/ipns\//, 'http://')
         await browser.tabs.update(state.currentTab.id, {
           loadReplace: true,
-          url: newURL
+          url: originalUrl
         })
-       */
       }
     } catch (error) {
       console.error(`Unable to update redirect state due to ${error}`)

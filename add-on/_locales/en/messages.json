@@ -56,11 +56,11 @@
     "description": "A menu item in Browser Action pop-up (panel_globalRedirectEnable)"
   },
   "panel_thisSiteRedirectEnable": {
-    "message": "Restore Redirects on This Site",
+    "message": "Restore Redirects on $1",
     "description": "A menu item in Browser Action pop-up (panel_thisSiteRedirectEnable)"
   },
   "panel_thisSiteRedirectDisable": {
-    "message": "Disable Redirects on This Site",
+    "message": "Disable Redirects on $1",
     "description": "A menu item in Browser Action pop-up (panel_thisSiteRedirectDisable)"
   },
   "panel_pinCurrentIpfsAddress": {

@@ -30,10 +30,10 @@ module.exports = function browserActionPage (state, emit) {
     <div class="sans-serif" style="text-rendering: optimizeLegibility;">
       ${header(headerProps)}
       ${operations(opsProps)}
-      
+
       <div class="no-select w-100 outline-0--focus tl ba b--dashed b--navy-muted">
-        <div class="ph3 pv2 i bg-snow truncate tl ">
-          ${state.currentFqdn}
+        <div class="ph3 pv2 b navy-muted bg-snow-muted truncate tl ">
+          Actions for <span title="${state.currentFqdn}">the Active Tab</span>:
         </div>
         <div class="">
           ${contextActions(contextActionsProps)}

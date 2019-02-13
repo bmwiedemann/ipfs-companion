@@ -9,6 +9,7 @@ const { contextMenuCopyAddressAtPublicGw, contextMenuCopyRawCid, contextMenuCopy
 module.exports = function contextActions ({
   active,
   globalRedirectEnabled,
+  currentFqdn,
   currentTabRedirectOptOut,
   ipfsNodeType,
   isIpfsContext,
@@ -61,16 +62,18 @@ module.exports = function contextActions ({
 
   return html`
     <div class='fade-in pv1'>
+  ${renderIpfsContextItems()}
   ${navItem({
     text: browser.i18n.getMessage(
       globalRedirectEnabled && !currentTabRedirectOptOut
         ? 'panel_thisSiteRedirectDisable'
-        : 'panel_thisSiteRedirectEnable'
+        : 'panel_thisSiteRedirectEnable',
+      currentFqdn
     ),
+    addClass: 'truncate',
     disabled: !activeSiteRedirectSwitch,
     onClick: onToggleSiteRedirect
   })}
-  ${renderIpfsContextItems()}
     </div>
   `
 }

@@ -12,7 +12,9 @@ module.exports = function pageActionPage (state, emit) {
   const onCopy = (copyAction) => emit('copy', copyAction)
   const onPin = () => emit('pin')
   const onUnPin = () => emit('unPin')
-  const contextActionsProps = Object.assign({ onCopy, onPin, onUnPin }, state)
+  const onToggleSiteRedirect = () => emit('toggleSiteRedirect')
+
+  const contextActionsProps = Object.assign({ onCopy, onPin, onUnPin, onToggleSiteRedirect }, state)
 
   // Instant init: page-action is shown only in ipfsContext
   contextActionsProps.isIpfsContext = true
