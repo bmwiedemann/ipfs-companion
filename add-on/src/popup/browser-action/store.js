@@ -131,8 +131,7 @@ module.exports = (state, emitter) => {
 
   emitter.on('openWebUi', async () => {
     try {
-      // Open bundled version of WebUI
-      await browser.tabs.create({ url: '/webui/index.html' })
+      browser.tabs.create({ url: state.webuiRootUrl })
       window.close()
     } catch (error) {
       console.error(`Unable Open Web UI due to ${error}`)
@@ -288,6 +287,7 @@ module.exports = (state, emitter) => {
       state.isIpfsOnline = state.active && status.peerCount > -1
       state.gatewayVersion = state.active && status.gatewayVersion ? status.gatewayVersion : null
       state.ipfsApiUrl = state.active ? status.apiURLString : null
+      state.webuiRootUrl = status.webuiRootUrl
     } else {
       state.ipfsNodeType = 'external'
       state.swarmPeers = null
